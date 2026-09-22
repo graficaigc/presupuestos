@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuestos — Ingresar</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="auth-shell">
+
+  <section class="auth-panel">
+    <span class="auth-blob b1"></span>
+    <span class="auth-blob b2"></span>
+    <div class="auth-panel-content">
+      <div class="brand">
+        <svg class="logo-mark" width="32" height="32" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="lgAuth" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6577f6"/><stop offset="1" stop-color="#3543c9"/></linearGradient></defs>
+          <rect width="40" height="40" rx="9" fill="#fff"/>
+          <path d="M11 9h18a1 1 0 0 1 1 1v19.2l-2.6-1.6-2.7 1.6-2.7-1.6-2.7 1.6-2.7-1.6-2.7 1.6-2.7-1.6-2.7 1.6V10a1 1 0 0 1 1-1z" fill="url(#lgAuth)"/>
+          <rect x="14.5" y="14" width="11" height="1.8" rx="0.9" fill="#fff"/>
+          <rect x="14.5" y="18.4" width="11" height="1.8" rx="0.9" fill="#fff" opacity="0.7"/>
+          <rect x="14.5" y="22.8" width="6.5" height="1.8" rx="0.9" fill="#fff" opacity="0.7"/>
+        </svg>
+        <span class="brand-name">Presupuestos</span>
+      </div>
+      <h1>Presupuestos automáticos para cualquier rubro</h1>
+      <p class="lead">Cargá tu lista de precios una sola vez. A partir de ahí, cada presupuesto se calcula solo: materiales, margen, descuento e impuestos.</p>
+      <ul class="auth-perks">
+        <li>
+          <span class="perk-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span>14 días de prueba gratis, sin tarjeta</span>
+        </li>
+        <li>
+          <span class="perk-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span>Rubros y catálogos de precios ilimitados</span>
+        </li>
+        <li>
+          <span class="perk-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span>Exportá cada presupuesto como PDF listo para enviar</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="auth-form-side">
+    <div class="auth-card">
+      <p class="auth-title" id="authTitle">Bienvenido de nuevo</p>
+      <p class="auth-subtitle" id="authSubtitle">Ingresá para seguir armando presupuestos.</p>
+
+      <div class="auth-tabs">
+        <button class="btn active" id="tabLogin">Ingresar</button>
+        <button class="btn" id="tabSignup">Crear cuenta</button>
+      </div>
+
+      <form id="formLogin">
+        <label class="full">Email
+          <input type="email" id="loginEmail" required autocomplete="username">
+        </label>
+        <label class="full">Contraseña
+          <input type="password" id="loginPassword" required autocomplete="current-password">
+        </label>
+        <button class="btn primary" style="width:100%; justify-content:center; padding:11px;" type="submit">Ingresar</button>
+        <p class="auth-error" id="loginError"></p>
+      </form>
+
+      <form id="formSignup" hidden>
+        <label class="full">Nombre de tu empresa
+          <input type="text" id="signupNombre" required>
+        </label>
+        <label class="full">Email
+          <input type="email" id="signupEmail" required autocomplete="username">
+        </label>
+        <label class="full">Contraseña (mínimo 6 caracteres)
+          <input type="password" id="signupPassword" required minlength="6" autocomplete="new-password">
+        </label>
+        <button class="btn primary" style="width:100%; justify-content:center; padding:11px;" type="submit">Crear cuenta y empezar prueba gratis</button>
+        <p class="auth-error" id="signupError"></p>
+      </form>
+    </div>
+  </section>
+
+</div>
+
+<script src="api.js"></script>
+<script>
+  const tabLogin = document.getElementById("tabLogin");
+  const tabSignup = document.getElementById("tabSignup");
+  const formLogin = document.getElementById("formLogin");
+  const formSignup = document.getElementById("formSignup");
+  const authTitle = document.getElementById("authTitle");
+  const authSubtitle = document.getElementById("authSubtitle");
+
+  tabLogin.addEventListener("click", () => {
+    tabLogin.classList.add("active"); tabSignup.classList.remove("active");
+    formLogin.hidden = false; formSignup.hidden = true;
+    authTitle.textContent = "Bienvenido de nuevo";
+    authSubtitle.textContent = "Ingresá para seguir armando presupuestos.";
+  });
+  tabSignup.addEventListener("click", () => {
+    tabSignup.classList.add("active"); tabLogin.classList.remove("active");
+    formSignup.hidden = false; formLogin.hidden = true;
+    authTitle.textContent = "Creá tu cuenta";
+    authSubtitle.textContent = "Empezá gratis, sin tarjeta de crédito.";
+  });
+
+  formLogin.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorEl = document.getElementById("loginError");
+    errorEl.textContent = "";
+    try {
+      const { token, company } = await Api.post("/auth/login", {
+        email: document.getElementById("loginEmail").value,
+        password: document.getElementById("loginPassword").value,
+      });
+      Api.setSession(token, company);
+      window.location.href = "index.html";
+    } catch (err) {
+      errorEl.textContent = err.message;
+    }
+  });
+
+  formSignup.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorEl = document.getElementById("signupError");
+    errorEl.textContent = "";
+    try {
+      const { token, company } = await Api.post("/auth/signup", {
+        nombreEmpresa: document.getElementById("signupNombre").value,
+        email: document.getElementById("signupEmail").value,
+        password: document.getElementById("signupPassword").value,
+      });
+      Api.setSession(token, company);
+      window.location.href = "index.html";
+    } catch (err) {
+      errorEl.textContent = err.message;
+    }
+  });
+
+  if (Api.getToken()) window.location.href = "index.html";
+</script>
+</body>
+</html>

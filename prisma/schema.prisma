@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Postgres gestionado (ej. Neon) para que la demo no pierda datos
+  // cuando el hosting gratuito reinicia la app.
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id                   String   @id @default(cuid())
+  nombre               String
+  email                String   @unique
+  passwordHash         String
+  telefono             String?
+  direccion            String?
+  ivaDefault           Float    @default(21)
+  numeroSiguiente      Int      @default(1)
+
+  lsCustomerId         String?  // customer_id de Lemon Squeezy
+  lsSubscriptionId     String?  // subscription id de Lemon Squeezy
+  subscriptionStatus   String   @default("trialing") // trialing | active | past_due | canceled
+  trialEndsAt          DateTime?
+
+  createdAt            DateTime @default(now())
+
+  rubros        Rubro[]
+  presupuestos  Presupuesto[]
+}
+
+model Rubro {
+  id        String   @id @default(cuid())
+  nombre    String
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  items     Item[]
+  createdAt DateTime @default(now())
+}
+
+model Item {
+  id       String  @id @default(cuid())
+  nombre   String
+  unidad   String
+  precio   Float
+  rubroId  String
+  rubro    Rubro   @relation(fields: [rubroId], references: [id], onDelete: Cascade)
+}
+
+model Presupuesto {
+  id               String   @id @default(cuid())
+  numero            Int
+  fecha             DateTime @default(now())
+  clienteNombre     String
+  clienteTelefono   String?
+  clienteEmail      String?
+  clienteDireccion  String?
+  rubroId           String?
+  rubroNombre       String?
+  itemsJson         String   // array de {nombre, unidad, cantidad, precioUnitario} serializado
+  margenPct         Float    @default(0)
+  descuentoPct      Float    @default(0)
+  ivaPct            Float    @default(0)
+  validezDias       Int      @default(15)
+  notas             String?
+  estado            String   @default("Borrador")
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}

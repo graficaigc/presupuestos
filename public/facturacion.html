@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuestos — Facturación</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="logo-mark" width="30" height="30" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs><linearGradient id="lgTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6577f6"/><stop offset="1" stop-color="#3543c9"/></linearGradient></defs>
+      <rect width="40" height="40" rx="9" fill="url(#lgTop)"/>
+      <path d="M11 9h18a1 1 0 0 1 1 1v19.2l-2.6-1.6-2.7 1.6-2.7-1.6-2.7 1.6-2.7-1.6-2.7 1.6-2.7-1.6-2.7 1.6V10a1 1 0 0 1 1-1z" fill="#fff"/>
+      <rect x="14.5" y="14" width="11" height="1.8" rx="0.9" fill="#3543c9"/>
+      <rect x="14.5" y="18.4" width="11" height="1.8" rx="0.9" fill="#3543c9" opacity="0.55"/>
+      <rect x="14.5" y="22.8" width="6.5" height="1.8" rx="0.9" fill="#3543c9" opacity="0.55"/>
+    </svg>
+    <span class="brand-name">Presupuestos</span>
+  </div>
+  <nav class="tabs">
+    <a class="tab-btn" href="index.html" style="text-decoration:none;">Presupuestos</a>
+    <a class="tab-btn" href="index.html#rubros" style="text-decoration:none;">Rubros y precios</a>
+    <button class="tab-btn active">Facturación</button>
+  </nav>
+</header>
+
+<main style="max-width:600px;">
+  <div class="view-header"><h1>Facturación</h1></div>
+
+  <p class="auth-error" id="avisoVencido" hidden style="background:var(--danger-light); padding:10px 14px; border-radius:8px;">
+    Tu período de prueba terminó o tu suscripción no está activa. Suscribite para seguir usando la app.
+  </p>
+
+  <div class="card" id="estadoCard">
+    <div class="plan-card-header">
+      <h2>Tu plan</h2>
+      <span class="badge" id="estadoBadge"></span>
+    </div>
+    <div class="plan-row">
+      <span class="plan-price">$10 <small>USD / mes</small></span>
+    </div>
+    <p id="estadoTexto" style="color:var(--text-muted); margin: 0 0 16px;">Cargando...</p>
+    <button class="btn primary" id="btnSuscribirse" hidden>Suscribirme ahora</button>
+    <button class="btn" id="btnPortal" hidden>Gestionar suscripción</button>
+    <p class="hint" id="lsAviso" hidden style="margin-top:12px;">
+      El cobro todavía no está configurado en el servidor (faltan las claves de Lemon Squeezy en el .env).
+    </p>
+  </div>
+
+  <button class="btn" id="btnLogout">Cerrar sesión</button>
+</main>
+
+<script src="api.js"></script>
+<script>
+  requireSession();
+
+  const params = new URLSearchParams(location.search);
+  document.getElementById("avisoVencido").hidden = params.get("vencido") !== "1";
+
+  function setBadge(texto, tipo) {
+    const badge = document.getElementById("estadoBadge");
+    badge.textContent = texto;
+    badge.className = "badge " + tipo;
+  }
+
+  async function cargar() {
+    const { company } = await Api.get("/auth/me");
+    Api.setSession(Api.getToken(), company);
+
+    const texto = document.getElementById("estadoTexto");
+    const btnSuscribirse = document.getElementById("btnSuscribirse");
+    const btnPortal = document.getElementById("btnPortal");
+
+    if (company.subscriptionStatus === "active") {
+      setBadge("Activa", "success");
+      texto.textContent = "Tu suscripción está activa. ¡Gracias por confiar en nosotros!";
+      btnPortal.hidden = false;
+    } else if (company.subscriptionStatus === "trialing") {
+      const dias = Math.max(0, Math.ceil((new Date(company.trialEndsAt) - new Date()) / (1000 * 60 * 60 * 24)));
+      setBadge("Prueba gratis", "warning");
+      texto.textContent = `Te quedan ${dias} día(s) de prueba gratuita. Suscribite para no perder el acceso.`;
+      btnSuscribirse.hidden = false;
+    } else {
+      setBadge("Inactiva", "danger");
+      texto.textContent = "No tenés una suscripción activa en este momento.";
+      btnSuscribirse.hidden = false;
+    }
+  }
+
+  document.getElementById("btnSuscribirse").addEventListener("click", async () => {
+    try {
+      const { url } = await Api.post("/billing/create-checkout-session", {});
+      window.location.href = url;
+    } catch (err) {
+      document.getElementById("lsAviso").hidden = false;
+    }
+  });
+
+  document.getElementById("btnPortal").addEventListener("click", async () => {
+    const { url } = await Api.post("/billing/create-portal-session", {});
+    window.location.href = url;
+  });
+
+  document.getElementById("btnLogout").addEventListener("click", () => Api.logout());
+
+  cargar();
+</script>
+</body>
+</html>
