@@ -340,7 +340,10 @@ document.getElementById("btnImprimirEditor").addEventListener("click", () => {
   const numero = currentEditingId
     ? state.presupuestos.find((p) => p.id === currentEditingId)?.numero
     : state.company.numeroSiguiente;
-  const fecha = new Date().toLocaleDateString("es-AR");
+  const validezDias = parseInt(document.getElementById("editorValidez").value) || 0;
+  const hoy = new Date();
+  const fecha = hoy.toLocaleDateString("es-AR");
+  const vencimiento = new Date(hoy.getTime() + validezDias * 24 * 60 * 60 * 1000);
   const emp = state.company;
 
   const filasItems = editorItems.map((it) => `
@@ -354,26 +357,30 @@ document.getElementById("btnImprimirEditor").addEventListener("click", () => {
 
   document.getElementById("printArea").innerHTML = `
     <div class="print-header">
-      <div style="display:flex; gap:12px; align-items:flex-start;">
-        ${emp.logoUrl ? `<img src="${emp.logoUrl}" alt="" style="width:48px;height:48px;border-radius:8px;object-fit:contain;background:#fff;border:1px solid #ddd;">` : ""}
+      <div class="print-brand">
+        ${emp.logoUrl ? `<img class="print-logo" src="${emp.logoUrl}" alt="">` : ""}
         <div>
           <h1>${escapeHtml(emp.nombre || "Mi Empresa")}</h1>
-          <div>${escapeHtml(emp.telefono || "")} ${emp.telefono && emp.email ? "·" : ""} ${escapeHtml(emp.email || "")}</div>
-          <div>${escapeHtml(emp.direccion || "")}</div>
+          <div class="print-empresa-info">
+            ${escapeHtml(emp.telefono || "")} ${emp.telefono && emp.email ? "·" : ""} ${escapeHtml(emp.email || "")}<br>
+            ${escapeHtml(emp.direccion || "")}
+          </div>
         </div>
       </div>
       <div class="print-meta">
-        <div><strong>Presupuesto #${numero || ""}</strong></div>
-        <div>Fecha: ${fecha}</div>
-        <div>Rubro: ${escapeHtml(rubro ? rubro.nombre : "-")}</div>
-        <div>Validez: ${document.getElementById("editorValidez").value} días</div>
+        <div class="print-numero">Presupuesto #${numero || ""}</div>
+        <div>Fecha: <strong>${fecha}</strong></div>
+        <div>Rubro: <strong>${escapeHtml(rubro ? rubro.nombre : "-")}</strong></div>
+        <div>Válido hasta: <strong>${validezDias ? vencimiento.toLocaleDateString("es-AR") : "-"}</strong></div>
       </div>
     </div>
 
     <div class="print-section-title">Cliente</div>
-    <div>${escapeHtml(cliente.nombre || "-")}</div>
-    <div>${escapeHtml(cliente.telefono || "")} ${cliente.telefono && cliente.email ? "·" : ""} ${escapeHtml(cliente.email || "")}</div>
-    <div>${escapeHtml(cliente.direccion || "")}</div>
+    <div class="print-cliente-box">
+      <div class="cliente-nombre">${escapeHtml(cliente.nombre || "-")}</div>
+      <div>${escapeHtml(cliente.telefono || "")} ${cliente.telefono && cliente.email ? "·" : ""} ${escapeHtml(cliente.email || "")}</div>
+      <div>${escapeHtml(cliente.direccion || "")}</div>
+    </div>
 
     <div class="print-section-title">Detalle</div>
     <table class="print-table">

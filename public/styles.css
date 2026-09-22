@@ -284,19 +284,64 @@ input::placeholder, textarea::placeholder{ color: var(--text-faint); }
 /* ---------- Print ---------- */
 #printArea{ display:none; }
 @media print{
+  @page{ margin: 16mm 14mm; }
+
   body *{ visibility:hidden; }
   #printArea, #printArea *{ visibility:visible; }
-  #printArea{ display:block; position:absolute; top:0; left:0; width:100%; padding: 30px; font-family: Arial, sans-serif; color:#111; }
-  .print-header{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #111; padding-bottom:12px; margin-bottom:18px; }
-  .print-header h1{ margin:0 0 4px; font-size:20px; }
-  .print-meta{ text-align:right; font-size:13px; }
-  .print-section-title{ font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:#555; margin: 18px 0 6px; }
-  .print-table{ width:100%; border-collapse:collapse; font-size:13px; }
-  .print-table th, .print-table td{ border-bottom:1px solid #ccc; padding:6px 4px; text-align:left; }
-  .print-table th.num, .print-table td.num{ text-align:right; }
-  .print-totales{ margin-top:14px; width:280px; margin-left:auto; font-size:13px; }
-  .print-totales div{ display:flex; justify-content:space-between; padding:3px 0; }
-  .print-totales .total-final{ font-size:16px; font-weight:800; border-top:2px solid #111; margin-top:6px; padding-top:6px; }
-  .print-notas{ margin-top:20px; font-size:12px; color:#333; white-space:pre-wrap; }
-  .print-footer{ margin-top:40px; font-size:11px; color:#777; text-align:center; }
+  #printArea{
+    display:block; position:absolute; top:0; left:0; width:100%;
+    font-family: "Inter", Arial, sans-serif; color:#1c2333; font-size:13px; line-height:1.5;
+  }
+
+  .print-header{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding-bottom:16px; margin-bottom:16px; border-bottom: 3px solid #4a5cf0;
+  }
+  .print-brand{ display:flex; gap:12px; align-items:center; }
+  .print-logo{ width:52px; height:52px; border-radius:10px; object-fit:contain; background:#fff; border:1px solid #e6e8f0; }
+  .print-header h1{ margin:0 0 4px; font-size:19px; font-weight:800; letter-spacing:-0.01em; }
+  .print-empresa-info{ font-size:12px; color:#667085; line-height:1.5; }
+
+  .print-numero{
+    display:inline-block; background:#edeffe; color:#3543c9; font-weight:800;
+    font-size:14px; padding:4px 12px; border-radius:999px; margin-bottom:6px;
+  }
+  .print-meta{ text-align:right; font-size:12px; color:#475066; line-height:1.6; }
+  .print-meta strong{ color:#1c2333; }
+
+  .print-section-title{
+    font-size:11px; text-transform:uppercase; letter-spacing:.06em; font-weight:700;
+    color:#98a1b3; margin: 22px 0 8px;
+  }
+  .print-cliente-box{
+    background:#f6f7fb; border-radius:10px; padding:12px 14px; font-size:13px;
+  }
+  .print-cliente-box .cliente-nombre{ font-weight:700; font-size:14px; margin-bottom:2px; }
+  .print-cliente-box div{ color:#475066; }
+
+  .print-table{ width:100%; border-collapse:collapse; font-size:12.5px; margin-top:4px; }
+  .print-table thead th{
+    text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;
+    color:#98a1b3; font-weight:700; padding:8px 6px; border-bottom:2px solid #e6e8f0;
+  }
+  .print-table td{ padding:9px 6px; border-bottom:1px solid #eef0f5; }
+  .print-table tbody tr:nth-child(even){ background:#fafbfd; }
+  .print-table th.num, .print-table td.num{ text-align:right; font-variant-numeric: tabular-nums; }
+
+  .print-totales{ margin-top:16px; width:290px; margin-left:auto; font-size:13px; }
+  .print-totales div{ display:flex; justify-content:space-between; padding:4px 0; color:#475066; }
+  .print-totales .total-final{
+    display:flex; justify-content:space-between; font-size:16px; font-weight:800;
+    color:#1c2333; background:#edeffe; border-radius:8px; padding:10px 12px; margin-top:8px;
+  }
+  .print-totales .total-final span:last-child{ color:#3543c9; }
+
+  .print-notas{
+    margin-top:22px; font-size:12px; color:#475066; white-space:pre-wrap;
+    background:#f6f7fb; border-radius:10px; padding:12px 14px;
+  }
+  .print-footer{
+    margin-top:36px; padding-top:12px; border-top:1px solid #e6e8f0;
+    font-size:10.5px; color:#98a1b3; text-align:center;
+  }
 }
