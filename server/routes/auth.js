@@ -63,6 +63,7 @@ function publicCompany(company) {
     email: company.email,
     telefono: company.telefono,
     direccion: company.direccion,
+    logoUrl: company.logoUrl,
     ivaDefault: company.ivaDefault,
     numeroSiguiente: company.numeroSiguiente,
     subscriptionStatus: company.subscriptionStatus,

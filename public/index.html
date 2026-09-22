@@ -14,7 +14,7 @@
 
 <header class="topbar">
   <div class="brand">
-    <svg class="logo-mark" width="30" height="30" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg class="logo-mark" id="logoMarkDefault" width="30" height="30" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs><linearGradient id="lgTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6577f6"/><stop offset="1" stop-color="#3543c9"/></linearGradient></defs>
       <rect width="40" height="40" rx="9" fill="url(#lgTop)"/>
       <path d="M11 9h18a1 1 0 0 1 1 1v19.2l-2.6-1.6-2.7 1.6-2.7-1.6-2.7 1.6-2.7-1.6-2.7 1.6-2.7-1.6-2.7 1.6V10a1 1 0 0 1 1-1z" fill="#fff"/>
@@ -22,6 +22,7 @@
       <rect x="14.5" y="18.4" width="11" height="1.8" rx="0.9" fill="#3543c9" opacity="0.55"/>
       <rect x="14.5" y="22.8" width="6.5" height="1.8" rx="0.9" fill="#3543c9" opacity="0.55"/>
     </svg>
+    <img class="logo-mark" id="empresaLogoTop" alt="" hidden>
     <span class="brand-name" id="empresaNombreTop">Presupuestos</span>
   </div>
   <nav class="tabs">
@@ -221,6 +222,23 @@
     <div class="view-header"><h1>Configuración</h1></div>
     <div class="card" style="max-width:520px;">
       <h2>Datos de la empresa</h2>
+
+      <label class="full">Logo de la empresa</label>
+      <div class="logo-upload-row">
+        <div class="logo-preview" id="logoPreviewWrap">
+          <img id="logoPreviewImg" alt="Logo" hidden>
+          <span id="logoPreviewPlaceholder">Sin logo</span>
+        </div>
+        <div class="logo-upload-actions">
+          <label class="btn import-btn">
+            Subir logo
+            <input type="file" id="inputLogo" accept="image/*" hidden>
+          </label>
+          <button class="btn" id="btnQuitarLogo" hidden>Quitar logo</button>
+          <p class="hint">JPG o PNG, se ajusta solo. Aparece en el menú y en tus presupuestos.</p>
+        </div>
+      </div>
+
       <label class="full">Nombre de la empresa
         <input type="text" id="cfgNombre" placeholder="Ej: Servicios Integrales SRL">
       </label>

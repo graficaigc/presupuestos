@@ -354,10 +354,13 @@ document.getElementById("btnImprimirEditor").addEventListener("click", () => {
 
   document.getElementById("printArea").innerHTML = `
     <div class="print-header">
-      <div>
-        <h1>${escapeHtml(emp.nombre || "Mi Empresa")}</h1>
-        <div>${escapeHtml(emp.telefono || "")} ${emp.telefono && emp.email ? "·" : ""} ${escapeHtml(emp.email || "")}</div>
-        <div>${escapeHtml(emp.direccion || "")}</div>
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        ${emp.logoUrl ? `<img src="${emp.logoUrl}" alt="" style="width:48px;height:48px;border-radius:8px;object-fit:cover;">` : ""}
+        <div>
+          <h1>${escapeHtml(emp.nombre || "Mi Empresa")}</h1>
+          <div>${escapeHtml(emp.telefono || "")} ${emp.telefono && emp.email ? "·" : ""} ${escapeHtml(emp.email || "")}</div>
+          <div>${escapeHtml(emp.direccion || "")}</div>
+        </div>
       </div>
       <div class="print-meta">
         <div><strong>Presupuesto #${numero || ""}</strong></div>
@@ -540,6 +543,8 @@ document.getElementById("btnExportarCSV").addEventListener("click", () => {
 /* ---------------------------------------------------------------------- */
 /* VISTA: Configuración                                                    */
 /* ---------------------------------------------------------------------- */
+let logoPendiente; // undefined = sin cambios; string = nuevo logo; null = quitar
+
 function renderConfig() {
   document.getElementById("cfgNombre").value = state.company.nombre;
   document.getElementById("cfgTelefono").value = state.company.telefono || "";
@@ -548,11 +553,82 @@ function renderConfig() {
   document.getElementById("cfgDireccion").value = state.company.direccion || "";
   document.getElementById("cfgIva").value = state.company.ivaDefault;
   document.getElementById("cfgNumero").value = state.company.numeroSiguiente;
+  logoPendiente = undefined;
+  renderLogoPreview(state.company.logoUrl);
   actualizarMarca();
 }
 
+function renderLogoPreview(logoUrl) {
+  const img = document.getElementById("logoPreviewImg");
+  const placeholder = document.getElementById("logoPreviewPlaceholder");
+  const btnQuitar = document.getElementById("btnQuitarLogo");
+  if (logoUrl) {
+    img.src = logoUrl;
+    img.hidden = false;
+    placeholder.hidden = true;
+    btnQuitar.hidden = false;
+  } else {
+    img.hidden = true;
+    placeholder.hidden = false;
+    btnQuitar.hidden = true;
+  }
+}
+
+// Redimensiona la imagen elegida a un cuadrado chico antes de guardarla,
+// para no mandar fotos de varios MB como si fueran un logo.
+function redimensionarImagen(file, maxSize = 200) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("El archivo no es una imagen válida"));
+      img.onload = () => {
+        const escala = Math.min(1, maxSize / Math.max(img.width, img.height));
+        const w = Math.round(img.width * escala);
+        const h = Math.round(img.height * escala);
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById("inputLogo").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const dataUrl = await redimensionarImagen(file);
+    logoPendiente = dataUrl;
+    renderLogoPreview(dataUrl);
+  } catch (err) {
+    showToast(err.message);
+  }
+  e.target.value = "";
+});
+
+document.getElementById("btnQuitarLogo").addEventListener("click", () => {
+  logoPendiente = null;
+  renderLogoPreview(null);
+});
+
 function actualizarMarca() {
   document.getElementById("empresaNombreTop").textContent = state.company?.nombre || "Presupuestos";
+  const logoTop = document.getElementById("empresaLogoTop");
+  const logoDefault = document.getElementById("logoMarkDefault");
+  if (state.company?.logoUrl) {
+    logoTop.src = state.company.logoUrl;
+    logoTop.hidden = false;
+    logoDefault.hidden = true;
+  } else {
+    logoTop.hidden = true;
+    logoDefault.hidden = false;
+  }
 }
 
 document.getElementById("btnGuardarConfig").addEventListener("click", async () => {
@@ -563,8 +639,11 @@ document.getElementById("btnGuardarConfig").addEventListener("click", async () =
     ivaDefault: parseFloat(document.getElementById("cfgIva").value) || 0,
     numeroSiguiente: parseInt(document.getElementById("cfgNumero").value) || 1,
   };
+  if (logoPendiente !== undefined) payload.logoUrl = logoPendiente;
+
   const actualizado = await Api.put("/config", payload);
   state.company = { ...state.company, ...actualizado };
+  logoPendiente = undefined;
   actualizarMarca();
   showToast("Configuración guardada");
 });

@@ -16,6 +16,7 @@ model Company {
   passwordHash         String
   telefono             String?
   direccion            String?
+  logoUrl              String?  // logo de la empresa, como imagen data-URL
   ivaDefault           Float    @default(21)
   numeroSiguiente      Int      @default(1)
 

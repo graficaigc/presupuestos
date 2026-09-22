@@ -253,6 +253,18 @@ input::placeholder, textarea::placeholder{ color: var(--text-faint); }
   .auth-perks{ display:none; }
 }
 
+/* ---------- Logo de empresa ---------- */
+.logo-upload-row{ display:flex; gap:16px; align-items:center; margin-bottom:16px; }
+.logo-preview{
+  width:64px; height:64px; border-radius:14px; border:1px dashed var(--border-strong);
+  background: var(--surface-alt); display:flex; align-items:center; justify-content:center;
+  overflow:hidden; flex-shrink:0;
+}
+.logo-preview img{ width:100%; height:100%; object-fit:cover; }
+.logo-preview span{ font-size:11px; color: var(--text-faint); text-align:center; padding:4px; }
+.logo-upload-actions{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+.logo-upload-actions .btn{ padding:7px 12px; }
+
 /* ---------- Facturación ---------- */
 .plan-card-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
 .plan-row{ display:flex; align-items:baseline; gap:8px; margin: 4px 0 18px; }
