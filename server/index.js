@@ -33,7 +33,8 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 app.use((err, req, res, next) => {
   console.error("Error no controlado en", req.method, req.originalUrl, ":", err);
   if (res.headersSent) return next(err);
-  res.status(500).json({ error: "Error interno del servidor" });
+  // TODO: quitar "detalle" antes de ir a producción real (solo para debug del deploy).
+  res.status(500).json({ error: "Error interno del servidor", detalle: err.message });
 });
 
 // Red de seguridad: si algo async se escapa sin pasar por asyncHandler,
