@@ -355,7 +355,7 @@ document.getElementById("btnImprimirEditor").addEventListener("click", () => {
   document.getElementById("printArea").innerHTML = `
     <div class="print-header">
       <div style="display:flex; gap:12px; align-items:flex-start;">
-        ${emp.logoUrl ? `<img src="${emp.logoUrl}" alt="" style="width:48px;height:48px;border-radius:8px;object-fit:cover;">` : ""}
+        ${emp.logoUrl ? `<img src="${emp.logoUrl}" alt="" style="width:48px;height:48px;border-radius:8px;object-fit:contain;background:#fff;border:1px solid #ddd;">` : ""}
         <div>
           <h1>${escapeHtml(emp.nombre || "Mi Empresa")}</h1>
           <div>${escapeHtml(emp.telefono || "")} ${emp.telefono && emp.email ? "·" : ""} ${escapeHtml(emp.email || "")}</div>
@@ -621,13 +621,15 @@ function actualizarMarca() {
   document.getElementById("empresaNombreTop").textContent = state.company?.nombre || "Presupuestos";
   const logoTop = document.getElementById("empresaLogoTop");
   const logoDefault = document.getElementById("logoMarkDefault");
+  // Se manipula el atributo "hidden" directamente (no la propiedad .hidden):
+  // en SVG, la propiedad no siempre refleja el atributo en todos los motores.
   if (state.company?.logoUrl) {
     logoTop.src = state.company.logoUrl;
-    logoTop.hidden = false;
-    logoDefault.hidden = true;
+    logoTop.removeAttribute("hidden");
+    logoDefault.setAttribute("hidden", "");
   } else {
-    logoTop.hidden = true;
-    logoDefault.hidden = false;
+    logoTop.setAttribute("hidden", "");
+    logoDefault.removeAttribute("hidden");
   }
 }
 
