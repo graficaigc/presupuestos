@@ -45,7 +45,14 @@ process.on("uncaughtException", (err) => {
   console.error("Uncaught exception:", err);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor de Presupuestos escuchando en el puerto ${PORT}`);
-});
+// En Vercel el proceso no escucha un puerto propio: cada request se maneja
+// como función serverless (ver api/index.js), así que solo llamamos listen()
+// cuando corremos como servidor tradicional (local, Render, cPanel, etc.).
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Servidor de Presupuestos escuchando en el puerto ${PORT}`);
+  });
+}
+
+module.exports = app;

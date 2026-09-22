@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "node server/index.js",
     "start": "node server/index.js",
+    "postinstall": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio"
