@@ -26,6 +26,11 @@ app.use("/api/rubros", rubrosRoutes);
 app.use("/api/presupuestos", presupuestosRoutes);
 app.use("/api/billing", billingRoutes);
 
+// La raíz del sitio muestra la landing de venta, no la app directamente.
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "landing.html"));
+});
+
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 // Middleware de error final: cualquier excepción de una ruta (sync o async,
