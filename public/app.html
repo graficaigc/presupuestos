@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuestos</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="logo-mark" id="logoMarkDefault" width="30" height="30" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs><linearGradient id="lgTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6577f6"/><stop offset="1" stop-color="#3543c9"/></linearGradient></defs>
+      <rect width="40" height="40" rx="9" fill="url(#lgTop)"/>
+      <path d="M11 9h18a1 1 0 0 1 1 1v19.2l-2.6-1.6-2.7 1.6-2.7-1.6-2.7 1.6-2.7-1.6-2.7 1.6-2.7-1.6-2.7 1.6V10a1 1 0 0 1 1-1z" fill="#fff"/>
+      <rect x="14.5" y="14" width="11" height="1.8" rx="0.9" fill="#3543c9"/>
+      <rect x="14.5" y="18.4" width="11" height="1.8" rx="0.9" fill="#3543c9" opacity="0.55"/>
+      <rect x="14.5" y="22.8" width="6.5" height="1.8" rx="0.9" fill="#3543c9" opacity="0.55"/>
+    </svg>
+    <img class="logo-mark" id="empresaLogoTop" alt="" hidden>
+    <span class="brand-name" id="empresaNombreTop">Presupuestos</span>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-view="presupuestos">Presupuestos</button>
+    <button class="tab-btn" data-view="rubros">Rubros y precios</button>
+    <button class="tab-btn" data-view="config">Configuración</button>
+    <a class="tab-btn" href="facturacion.html" style="text-decoration:none;">Facturación</a>
+    <button class="tab-btn" id="btnLogout">Salir</button>
+  </nav>
+</header>
+<p class="trial-banner" id="trialBanner" hidden></p>
+
+<main id="app">
+
+  <!-- ================= VISTA: LISTADO DE PRESUPUESTOS ================= -->
+  <section id="view-presupuestos" class="view active">
+    <div class="view-header">
+      <h1>Presupuestos</h1>
+      <button class="btn primary" id="btnNuevoPresupuesto">+ Nuevo presupuesto</button>
+    </div>
+    <div class="toolbar">
+      <input type="search" id="buscarPresupuesto" placeholder="Buscar por cliente, número o rubro...">
+    </div>
+    <div class="table-wrap">
+      <table class="data-table" id="tablaPresupuestos">
+        <thead>
+          <tr>
+            <th>N°</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Rubro</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th class="col-actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="empty-state" id="emptyPresupuestos" hidden>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h10a1 1 0 0 1 1 1v16l-2.5-1.5-2.5 1.5-2.5-1.5-2.5 1.5-2.5-1.5V4a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 11h6M9 14h3"/></svg>
+        Todavía no creaste ningún presupuesto. Hacé clic en "Nuevo presupuesto" para empezar.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= VISTA: EDITOR DE PRESUPUESTO ================= -->
+  <section id="view-editor" class="view">
+    <div class="view-header">
+      <h1 id="editorTitulo">Nuevo presupuesto</h1>
+      <div class="view-header-actions">
+        <button class="btn" id="btnCancelarEditor">Cancelar</button>
+        <button class="btn" id="btnImprimirEditor">Imprimir / PDF</button>
+        <button class="btn primary" id="btnGuardarPresupuesto">Guardar presupuesto</button>
+      </div>
+    </div>
+
+    <div class="editor-grid">
+      <div class="card">
+        <h2>Datos del cliente</h2>
+        <div class="form-row">
+          <label>Nombre / Empresa
+            <input type="text" id="clienteNombre" placeholder="Ej: Juan Pérez">
+          </label>
+          <label>Teléfono
+            <input type="text" id="clienteTelefono" placeholder="Opcional">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Email
+            <input type="email" id="clienteEmail" placeholder="Opcional">
+          </label>
+          <label>Dirección / Obra
+            <input type="text" id="clienteDireccion" placeholder="Opcional">
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Rubro y detalle</h2>
+        <div class="form-row">
+          <label>Rubro
+            <select id="editorRubro"></select>
+          </label>
+          <label>Validez de la oferta (días)
+            <input type="number" id="editorValidez" value="15" min="0">
+          </label>
+        </div>
+
+        <div class="add-item-row">
+          <select id="selectorItemCatalogo"></select>
+          <input type="number" id="cantidadNuevoItem" placeholder="Cant." min="0.01" step="0.01" value="1">
+          <button class="btn" id="btnAgregarDeCatalogo">Agregar</button>
+          <button class="btn" id="btnAgregarManual">+ Ítem manual</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" id="tablaItemsPresupuesto">
+            <thead>
+              <tr>
+                <th>Ítem</th>
+                <th>Unidad</th>
+                <th class="num">Cant.</th>
+                <th class="num">Precio unit.</th>
+                <th class="num">Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p class="empty-state" id="emptyItemsPresupuesto">Agregá ítems del catálogo o cargá uno manual.</p>
+        </div>
+      </div>
+
+      <div class="card totales-card">
+        <h2>Totales</h2>
+        <div class="form-row">
+          <label>Margen / ganancia (%)
+            <input type="number" id="editorMargen" value="0" min="0" step="0.1">
+          </label>
+          <label>Descuento (%)
+            <input type="number" id="editorDescuento" value="0" min="0" step="0.1">
+          </label>
+          <label>IVA / Impuesto (%)
+            <input type="number" id="editorIva" value="0" min="0" step="0.1">
+          </label>
+        </div>
+        <label class="full">Notas / condiciones
+          <textarea id="editorNotas" rows="2" placeholder="Ej: forma de pago, tiempos de entrega, garantía..."></textarea>
+        </label>
+        <div class="totales-resumen">
+          <div><span>Subtotal</span><strong id="resSubtotal">$0,00</strong></div>
+          <div><span>Margen</span><strong id="resMargen">$0,00</strong></div>
+          <div><span>Descuento</span><strong id="resDescuento">$0,00</strong></div>
+          <div><span>IVA</span><strong id="resIva">$0,00</strong></div>
+          <div class="total-final"><span>TOTAL</span><strong id="resTotal">$0,00</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VISTA: RUBROS Y PRECIOS ================= -->
+  <section id="view-rubros" class="view">
+    <div class="view-header">
+      <h1>Rubros y precios</h1>
+    </div>
+    <div class="rubros-grid">
+      <div class="card rubros-list-card">
+        <h2>Rubros</h2>
+        <ul class="rubros-list" id="listaRubros"></ul>
+        <div class="add-item-row">
+          <input type="text" id="nuevoRubroNombre" placeholder="Nombre del nuevo rubro">
+          <button class="btn primary" id="btnAgregarRubro">+ Agregar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="view-header" style="margin-bottom:8px;">
+          <h2 id="rubroSeleccionadoTitulo">Seleccioná un rubro</h2>
+          <div class="view-header-actions" id="rubroAcciones" hidden>
+            <button class="btn" id="btnRenombrarRubro">Renombrar</button>
+            <button class="btn danger" id="btnEliminarRubro">Eliminar rubro</button>
+          </div>
+        </div>
+
+        <div id="catalogoContenido" hidden>
+          <div class="add-item-row wrap">
+            <input type="text" id="itemNombre" placeholder="Nombre del ítem/servicio">
+            <input type="text" id="itemUnidad" placeholder="Unidad (m2, hs, unid.)">
+            <input type="number" id="itemPrecio" placeholder="Precio" min="0" step="0.01">
+            <button class="btn primary" id="btnAgregarItemCatalogo">+ Agregar ítem</button>
+          </div>
+          <div class="import-row">
+            <label class="btn import-btn">
+              Importar CSV
+              <input type="file" id="inputImportarCSV" accept=".csv" hidden>
+            </label>
+            <button class="btn" id="btnExportarCSV">Exportar CSV</button>
+            <span class="hint">Formato CSV: nombre,unidad,precio</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table" id="tablaCatalogo">
+              <thead>
+                <tr><th>Ítem</th><th>Unidad</th><th class="num">Precio</th><th></th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <p class="empty-state" id="emptyCatalogo" hidden>Este rubro todavía no tiene ítems cargados.</p>
+          </div>
+        </div>
+        <p class="empty-state" id="emptySinRubro">Elegí un rubro de la izquierda, o creá uno nuevo, para cargar su lista de precios.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VISTA: CONFIGURACIÓN ================= -->
+  <section id="view-config" class="view">
+    <div class="view-header"><h1>Configuración</h1></div>
+    <div class="card" style="max-width:520px;">
+      <h2>Datos de la empresa</h2>
+
+      <label class="full">Logo de la empresa</label>
+      <div class="logo-upload-row">
+        <div class="logo-preview" id="logoPreviewWrap">
+          <img id="logoPreviewImg" alt="Logo" hidden>
+          <span id="logoPreviewPlaceholder">Sin logo</span>
+        </div>
+        <div class="logo-upload-actions">
+          <label class="btn import-btn">
+            Subir logo
+            <input type="file" id="inputLogo" accept="image/*" hidden>
+          </label>
+          <button class="btn" id="btnQuitarLogo" hidden>Quitar logo</button>
+          <p class="hint">JPG o PNG, se ajusta solo. Aparece en el menú y en tus presupuestos.</p>
+        </div>
+      </div>
+
+      <label class="full">Nombre de la empresa
+        <input type="text" id="cfgNombre" placeholder="Ej: Servicios Integrales SRL">
+      </label>
+      <div class="form-row">
+        <label>Teléfono
+          <input type="text" id="cfgTelefono">
+        </label>
+        <label>Email
+          <input type="email" id="cfgEmail">
+        </label>
+      </div>
+      <label class="full">Dirección
+        <input type="text" id="cfgDireccion">
+      </label>
+      <div class="form-row">
+        <label>IVA / Impuesto por defecto (%)
+          <input type="number" id="cfgIva" min="0" step="0.1">
+        </label>
+        <label>Próximo número de presupuesto
+          <input type="number" id="cfgNumero" min="1" step="1">
+        </label>
+      </div>
+      <button class="btn primary" id="btnGuardarConfig">Guardar configuración</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Área usada solo para impresión -->
+<div id="printArea"></div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="api.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

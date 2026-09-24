@@ -118,7 +118,7 @@
         password: document.getElementById("loginPassword").value,
       });
       Api.setSession(token, company);
-      window.location.href = "index.html";
+      window.location.href = "app.html";
     } catch (err) {
       errorEl.textContent = err.message;
     }
@@ -135,13 +135,13 @@
         password: document.getElementById("signupPassword").value,
       });
       Api.setSession(token, company);
-      window.location.href = "index.html";
+      window.location.href = "app.html";
     } catch (err) {
       errorEl.textContent = err.message;
     }
   });
 
-  if (Api.getToken()) window.location.href = "index.html";
+  if (Api.getToken()) window.location.href = "app.html";
   if (new URLSearchParams(location.search).get("signup") === "1") tabSignup.click();
 </script>
 </body>

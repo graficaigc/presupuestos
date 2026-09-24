@@ -62,7 +62,7 @@ router.post("/create-checkout-session", requireAuth, requireLemonSqueezyConfigur
             custom: { company_id: company.id },
           },
           product_options: {
-            redirect_url: `${process.env.APP_URL}/index.html?suscripcion=exitosa`,
+            redirect_url: `${process.env.APP_URL}/app.html?suscripcion=exitosa`,
           },
         },
         relationships: {
